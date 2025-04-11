@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Color Tagger</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            width: 350px; /* Adjusted width */
+            padding: 0; /* Remove body padding, handle in sections */
+            background-color: #f4f4f4;
+            font-size: 14px;
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars from body */
+        }
+        h3 { /* Extension Title - Optional */
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        /* --- Tab Styles --- */
+        .tab-container {
+            display: flex;
+            background-color: #e0e0e0;
+            border-bottom: 1px solid #ccc;
+        }
+        .tab-button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            font-size: 1em;
+            text-align: center;
+            border-bottom: 3px solid transparent; /* For active indicator */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            color: #555;
+        }
+        .tab-button:hover {
+            background-color: #d5d5d5;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #007bff;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* --- Tab Content Styles --- */
+        .tab-content {
+            display: none; /* Hide content by default */
+            padding: 15px;
+            min-height: 250px; /* Give some base height */
+            max-height: 400px; /* Limit overall popup height */
+            overflow-y: auto; /* Allow scrolling within content */
+        }
+        .tab-content.active {
+            display: block; /* Show active content */
+        }
+
+        /* --- Form Styles (Main Tab) --- */
+        #main-tab label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        #main-tab input[type="text"],
+        #main-tab input[type="color"],
+        #main-tab button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #main-tab input[type="color"] {
+            height: 35px;
+            padding: 2px;
+        }
+        #main-tab button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #main-tab button:hover {
+            background-color: #0056b3;
+        }
+        #main-tab #status {
+            margin-top: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: green;
+            min-height: 1.2em;
+        }
+        #main-tab .url-display {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            background-color: #fff;
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+
+        /* --- History Styles (Saved Tags Tab) --- */
+        #saved-tags-tab {
+             padding: 10px; /* Less padding for list */
+        }
+        #history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #history-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 5px;
+            border-bottom: 1px solid #eee;
+            gap: 8px; /* Gap between elements in the row */
+        }
+        #history-list li:last-child {
+            border-bottom: none;
+        }
+        .history-url-display { /* Non-editable URL part */
+            color: #333;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-basis: 120px; /* Give URL a base width */
+            flex-shrink: 1;
+            border: 1px solid transparent; /* Align with inputs */
+            padding: 4px;
+        }
+         /* Editable fields */
+        .history-color-input,
+        .history-tag-input {
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .history-color-input {
+             flex-basis: 50px; /* Width for color picker */
+             height: 28px; /* Match text input height better */
+             padding: 1px 2px; /* Adjust padding for color type */
+             min-width: 50px; /* Prevent shrinking too much */
+        }
+        .history-tag-input {
+            flex-grow: 1; /* Allow tag input to take space */
+            min-width: 60px;
+        }
+        .history-actions { /* Container for buttons */
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0; /* Prevent buttons shrinking */
+        }
+        .history-actions button {
+            border: none;
+            border-radius: 4px;
+            padding: 4px 7px;
+            cursor: pointer;
+            font-size: 0.8em;
+            color: white;
+            line-height: 1;
+        }
+        .save-changes-button {
+            background-color: #28a745; /* Green */
+        }
+        .save-changes-button:hover {
+            background-color: #218838;
+        }
+        .delete-button {
+            background-color: #dc3545; /* Red */
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+        .no-history {
+            text-align: center;
+            color: #888;
+            padding: 15px;
+            font-style: italic;
+        }
+        .history-status { /* Status message per row */
+            font-size: 0.8em;
+            margin-left: 5px;
+            color: green;
+            min-width: 40px; /* Reserve space */
+            text-align: right;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="tab-container">
+        <button class="tab-button active" data-tab="main-tab">Main</button>
+        <button class="tab-button" data-tab="saved-tags-tab">Saved Tags</button>
+    </div>
+
+    <div id="main-tab" class="tab-content active">
+        <label for="url">URL:</label>
+        <div id="current-url" class="url-display">Loading...</div>
+        <input type="hidden" id="url">
+
+        <label for="color">Frame Color:</label>
+        <input type="color" id="color" value="#ff0000">
+
+        <label for="tag">Tag:</label>
+        <input type="text" id="tag" placeholder="e.g., Staging, Production">
+
+        <button id="saveButton">Save Tag for Current URL</button>
+        <div id="status"></div>
+    </div>
+
+    <div id="saved-tags-tab" class="tab-content">
+        <ul id="history-list">
+            <li class="no-history">Loading saved tags...</li>
+        </ul>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
+
