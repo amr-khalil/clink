@@ -14,12 +14,108 @@ h3 {
   color: #333;
 }
 
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  height: 2rem;
+}
+
+.label {
+  display: flex;
+  flex-basis: 20%;
+  align-items: center;
+  font-weight: 500;
+  color: #555;
+  height: 100%;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2rem;
+  padding: 0 5px;
+}
+
+.url {
+  background-color: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  word-break: break-all;
+}
+
+.color {
+  display: flex;
+  flex-basis: 80%;
+  background-color: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.opacity {
+  flex-basis: 80%;
+  cursor: move;
+}
+
+.value-display {
+  flex-basis: 20%;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.tag {
+  background-color: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.save-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+.status {
+  margin-top: 5px;
+  text-align: center;
+  color: green;
+  min-height: 1.2em;
+}
+
 /* --- Tab Styles --- */
 .tab-container {
   display: flex;
   background-color: #e0e0e0;
   border-bottom: 1px solid #ccc;
 }
+
 .tab-button {
   flex-grow: 1;
   padding: 10px 15px;
@@ -51,55 +147,6 @@ h3 {
 }
 .tab-content.active {
   display: block; /* Show active content */
-}
-
-/* --- Form Styles (Main Tab) --- */
-#main-tab label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
-}
-#main-tab input[type="text"],
-#main-tab input[type="color"],
-#main-tab button {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-#main-tab input[type="color"] {
-  height: 35px;
-  padding: 2px;
-}
-#main-tab button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1em;
-}
-#main-tab button:hover {
-  background-color: #0056b3;
-}
-#main-tab #status {
-  margin-top: 5px;
-  text-align: center;
-  font-weight: bold;
-  color: green;
-  min-height: 1.2em;
-}
-#main-tab .url-display {
-  font-size: 0.9em;
-  color: #666;
-  margin-bottom: 10px;
-  word-wrap: break-word;
-  background-color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
 }
 
 /* --- History Styles (Saved Tags Tab) --- */

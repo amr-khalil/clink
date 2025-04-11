@@ -8,23 +8,54 @@
   </head>
   <body>
     <div class="tab-container">
-      <button class="tab-button active" data-tab="main-tab">Main</button>
-      <button class="tab-button" data-tab="saved-tags-tab">Saved Tags</button>
+      <button class="tab-button active" data-tab="main-tab">Home</button>
+      <button class="tab-button" data-tab="saved-tags-tab">Saved Links</button>
     </div>
 
     <div id="main-tab" class="tab-content active">
-      <label for="url">URL:</label>
-      <div id="current-url" class="url-display">Loading...</div>
-      <input type="hidden" id="url" />
+      <div class="form-container">
+        <div class="row">
+          <label for="url" class="label">URL</label>
+          <div id="current-url" class="field url">Loading...</div>
+          <input type="hidden" id="url" />
+        </div>
 
-      <label for="color">Frame Color:</label>
-      <input type="color" id="color" value="#ff0000" />
+        <div class="row">
+          <label for="color" class="label">Color</label>
+          <input type="color" class="field color" id="color" value="#ff0000" />
+          <span id="color-value" class="value-display">#ff0000</span>
+        </div>
+        <div class="row">
+          <label for="opacity" class="label">Opacity</label>
+          <input
+            class="opacity"
+            type="range"
+            id="opacity"
+            min="0"
+            max="100"
+            value="50"
+          />
+          <span id="opacity-value" class="value-display">50%</span>
+        </div>
 
-      <label for="tag">Tag:</label>
-      <input type="text" id="tag" placeholder="e.g., Staging, Production" />
-
-      <button id="saveButton">Save Tag for Current URL</button>
-      <div id="status"></div>
+        <div class="row">
+          <label for="tag" class="label">Tag</label>
+          <input
+            type="text"
+            class="field tag"
+            id="tag"
+            placeholder="e.g., Staging, Production"
+          />
+        </div>
+        <div class="row">
+          <label class="label"></label>
+          <button id="saveButton" class="save-button">Save</button>
+        </div>
+        <div class="row">
+          <label class="label"></label>
+          <div id="status" class="status"></div>
+        </div>
+      </div>
     </div>
 
     <div id="saved-tags-tab" class="tab-content">

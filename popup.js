@@ -3,11 +3,24 @@ const urlDisplay = document.getElementById("current-url");
 const urlInput = document.getElementById("url"); // Hidden input
 const colorInput = document.getElementById("color");
 const tagInput = document.getElementById("tag");
+const opacityInput = document.getElementById("opacity");
+const colorValueDisplay = document.getElementById("color-value");
+const opacityValueDisplay = document.getElementById("opacity-value");
 const saveButton = document.getElementById("saveButton");
 const statusDiv = document.getElementById("status");
 const historyList = document.getElementById("history-list");
 const tabButtons = document.querySelectorAll(".tab-button");
 const tabContents = document.querySelectorAll(".tab-content");
+
+// Update color value display
+colorInput.addEventListener("input", () => {
+  colorValueDisplay.textContent = colorInput.value;
+});
+
+// Update opacity value display
+opacityInput.addEventListener("input", () => {
+  opacityValueDisplay.textContent = `${opacityInput.value}%`;
+});
 
 // --- Tab Switching Logic ---
 tabButtons.forEach((button) => {
@@ -272,9 +285,16 @@ saveButton.addEventListener("click", () => {
   const tag = tagInput.value.trim();
 
   if (!url) {
+    // Show error message
+    statusDiv.textContent = "URL required!";
+    statusDiv.style.color = "red";
+    saveButton.style.fontWeight = "100";
     /* ... error handling ... */ return;
   }
   if (!tag) {
+    // Show error message
+    statusDiv.textContent = "Tag required!";
+    statusDiv.style.color = "red";
     /* ... error handling ... */ return;
   }
 
