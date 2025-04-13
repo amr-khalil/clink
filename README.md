@@ -29,7 +29,7 @@ Ever accidentally made a change on a production website thinking you were on sta
 ## Demo
 
 Watch the extension in action:
-![Demo](media/demo.mp4)
+![Demo](media/demo.gif)
 
 ## How to Use
 
