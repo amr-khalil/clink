@@ -332,32 +332,110 @@ saveButton.addEventListener("click", () => {
   const tag = tagInput.value.trim();
   const opacity = parseInt(opacityInput.value, 10); // *** Get opacity value ***
 
+  // --- Input Validation ---
   if (!url) {
     statusDiv.textContent = "URL required!";
     statusDiv.style.color = "red";
-    saveButton.style.fontWeight = "100"; // This seems incorrect, maybe remove?
-    /* ... error handling ... */ return;
+    setTimeout(() => {
+      statusDiv.textContent = "";
+    }, 2000); // Clear status after delay
+    return;
   }
   if (!tag) {
     statusDiv.textContent = "Tag required!";
     statusDiv.style.color = "red";
-    /* ... error handling ... */ return;
-  } // *** Include opacity in the data to save ***
+    setTimeout(() => {
+      statusDiv.textContent = "";
+    }, 2000); // Clear status after delay
+    return;
+  }
 
+  // *** Include opacity in the data to save ***
   const dataToSave = { [url]: { color: color, tag: tag, opacity: opacity } };
+
+  // Disable button during save operation
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
+  statusDiv.textContent = ""; // Clear previous status
 
   chrome.storage.sync.set(dataToSave, () => {
     if (chrome.runtime.lastError) {
       console.error("Error saving data:", chrome.runtime.lastError);
       statusDiv.textContent = "Error saving data!";
       statusDiv.style.color = "red";
+      saveButton.disabled = false; // Re-enable button on error
+      saveButton.textContent = "Save";
+      setTimeout(() => {
+        statusDiv.textContent = "";
+      }, 3000); // Clear error status after longer delay
     } else {
-      statusDiv.textContent = "Saved!";
+      console.log("Data saved successfully for:", url, dataToSave[url]);
+      statusDiv.textContent = "Saved! Reloading page..."; // Indicate reload is happening
       statusDiv.style.color = "green";
-    } // Clear status after delay
-    setTimeout(() => {
-      if (statusDiv.textContent === "Saved!") statusDiv.textContent = "";
-    }, 2000);
+
+      // --- START: Reload Logic ---
+      // Query for the active tab in the current window
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs && tabs.length > 0 && tabs[0].id) {
+          const currentTabId = tabs[0].id;
+          // IMPORTANT: Check if the tab's URL still matches the URL we just saved.
+          // This prevents reloading the wrong tab if the user switched tabs
+          // after opening the popup but before clicking save.
+          if (tabs[0].url === url) {
+            chrome.tabs.reload(currentTabId, { bypassCache: false }, () => {
+              // bypassCache: false is default, can be true if needed
+              if (chrome.runtime.lastError) {
+                // Handle potential error during reload (e.g., tab closed)
+                console.error(
+                  `Error reloading tab ${currentTabId}:`,
+                  chrome.runtime.lastError.message,
+                );
+                statusDiv.textContent = "Saved, but page reload failed.";
+                statusDiv.style.color = "orange";
+                // Re-enable button since reload failed but save was ok
+                saveButton.disabled = false;
+                saveButton.textContent = "Save";
+                setTimeout(() => {
+                  statusDiv.textContent = "";
+                }, 3000);
+              } else {
+                console.log(`Tab ${currentTabId} reloaded successfully.`);
+                // Reload was successful, close the popup
+                window.close();
+              }
+            });
+          } else {
+            // URL mismatch - data saved, but don't reload this tab
+            console.log(
+              "Data saved, but active tab URL changed. Not reloading.",
+            );
+            statusDiv.textContent = "Saved! (Active tab changed)";
+            statusDiv.style.color = "green";
+            saveButton.disabled = false; // Re-enable button
+            saveButton.textContent = "Save";
+            // Don't close popup immediately so user sees the message
+            setTimeout(() => {
+              if (statusDiv.textContent === "Saved! (Active tab changed)")
+                statusDiv.textContent = "";
+              // Optionally close after delay: window.close();
+            }, 2500);
+          }
+        } else {
+          // Could not find active tab - unusual error
+          console.error("Could not get active tab ID to reload.");
+          statusDiv.textContent = "Saved, but couldn't trigger reload.";
+          statusDiv.style.color = "orange";
+          saveButton.disabled = false; // Re-enable button
+          saveButton.textContent = "Save";
+          setTimeout(() => {
+            statusDiv.textContent = "";
+          }, 3000);
+        }
+      });
+      // --- END: Reload Logic ---
+    }
+    // Note: The button re-enabling and status clearing are now handled
+    // within the reload logic's callbacks or error paths.
   });
 });
 
