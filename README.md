@@ -25,6 +25,10 @@ Ever accidentally made a change on a production website thinking you were on sta
 
 ![Home Tab](media/img1.png)
 ![History Tab](media/img2.png)
+
+## Demo
+
+Watch the extension in action:
 ![Demo](media/demo.mp4)
 
 ## How to Use
