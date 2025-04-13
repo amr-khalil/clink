@@ -1,12 +1,12 @@
 // File: popup.js
 // --- Get references to elements ---
 const urlDisplay = document.getElementById("current-url");
-const urlInput = document.getElementById("url"); // Hidden input
-const colorInput = document.getElementById("color");
+const urlInput = document.getElementById("url"); // Hidden input on Main Tab
+const colorInput = document.getElementById("color"); // Main Tab Color Input
 const tagInput = document.getElementById("tag");
-const opacityInput = document.getElementById("opacity"); // Already present
-const colorValueDisplay = document.getElementById("color-value");
-const opacityValueDisplay = document.getElementById("opacity-value"); // Already present
+const opacityInput = document.getElementById("opacity");
+const colorValueDisplay = document.getElementById("color-value"); // Main Tab Color Display
+const opacityValueDisplay = document.getElementById("opacity-value");
 const saveButton = document.getElementById("saveButton");
 const statusDiv = document.getElementById("status");
 const historyList = document.getElementById("history-list");
@@ -63,34 +63,39 @@ function displayHistory() {
     if (urls.length === 0) {
       historyList.innerHTML = '<li class="no-history">No saved tags yet.</li>';
       return; // No items to display
-    } // Sort URLs alphabetically for consistent order
+    }
 
+    // Sort URLs alphabetically for consistent order
     urls.sort();
 
     urls.forEach((url) => {
-      const itemData = items[url]; // Check if core data structure is as expected (opacity is optional for older entries)
+      const itemData = items[url];
+      // Check if core data structure is as expected
       if (
         itemData &&
         typeof itemData.color !== "undefined" &&
         typeof itemData.tag !== "undefined"
       ) {
         const listItem = document.createElement("li");
-        listItem.setAttribute("data-url", url); // Store URL on the li for reference // Truncate URL for display
+        listItem.setAttribute("data-url", url);
         listItem.className = "history-item";
-        listItem.innerHTML = `
-            <div class="history-item-container">
-              <a class="history-url-display" title="${url}" href="${url}">${url}</a>
-            </div>
-            <div class="history-item-container">
-              <input type="color" class="history-color-input" value="${itemData.color}">
-              <input type="text" class="history-tag-input" value="${itemData.tag}" placeholder="Enter tag">
-              <div class="history-actions">
-                <button class="save-changes-button" title="Save changes for this URL">Save</button>
-                <button class="delete-button" title="Delete this tag">X</button>
-              </div>
-              <span class="history-status"></span>
-            </div> `;
+        listItem.style.borderLeftColor = itemData.color; // Set initial border
 
+        listItem.innerHTML = `
+          <div class="history-item-container">
+            <a class="history-url-display" href="${url}" title="Open ${url} in new tab" target="_blank">${url}</a>
+          </div>
+          <div class="history-item-container">
+            <input type="color" class="history-color-input" value="${itemData.color}" title="Edit color">
+            <input type="text" class="history-tag-input" value="${itemData.tag}" placeholder="Enter tag" title="Edit tag">
+            <div class="history-actions">
+              <button class="save-changes-button" title="Save changes for this URL">Save</button>
+              <button class="delete-button" title="Delete this tag">X</button>
+            </div>
+            <span class="history-status"></span>
+          </div>`;
+
+        // Add event listeners for SAVE and DELETE buttons
         listItem
           .querySelector(".save-changes-button")
           .addEventListener("click", handleSaveChanges);
@@ -98,12 +103,47 @@ function displayHistory() {
           .querySelector(".delete-button")
           .addEventListener("click", handleDelete);
 
+        // ----- START: REAL-TIME BORDER COLOR & MAIN TAB UPDATE -----
+        const colorInputForThisItem = listItem.querySelector(
+          ".history-color-input",
+        );
+
+        if (colorInputForThisItem) {
+          colorInputForThisItem.addEventListener("input", (event) => {
+            const newColor = event.target.value;
+            const parentLi = event.target.closest("li.history-item");
+
+            if (parentLi) {
+              // 1. Update border color of the history item in Saved Links tab
+              parentLi.style.borderLeftColor = newColor;
+
+              // ----- START: Update Main Tab (if URLs match) -----
+              const historyItemUrl = parentLi.getAttribute("data-url");
+              const mainTabCurrentUrl = urlInput.value; // Get URL loaded in Main Tab
+
+              // Check if the history item's URL is the same as the one loaded in the main tab
+              if (
+                historyItemUrl &&
+                mainTabCurrentUrl &&
+                historyItemUrl === mainTabCurrentUrl
+              ) {
+                // Update the Main Tab's color input
+                colorInput.value = newColor;
+                // Update the Main Tab's color value display span
+                colorValueDisplay.textContent = newColor;
+              }
+              // ----- END: Update Main Tab (if URLs match) -----
+            }
+          });
+        }
+        // ----- END: REAL-TIME BORDER COLOR & MAIN TAB UPDATE -----
+
         historyList.appendChild(listItem);
       } else {
         console.warn(
           `Skipping item with unexpected data structure for URL: ${url}`,
           itemData,
-        ); // Optionally remove malformed data here: chrome.storage.sync.remove(url);
+        );
       }
     });
   });
@@ -169,7 +209,6 @@ function handleSaveChanges(event) {
         statusField.textContent = "Error!";
         statusField.style.color = "red";
       } else {
-        console.log("Changes saved for:", urlToSave);
         statusField.textContent = "Saved!";
         statusField.style.color = "green";
       } // Clear status message after a delay
@@ -204,7 +243,6 @@ function handleDelete(event) {
       button.textContent = "X";
       if (saveBtn) saveBtn.disabled = false;
     } else {
-      console.log("Item deleted:", urlToDelete); // Remove item from the list visually
       listItem.remove(); // Check if history is now empty and show placeholder
 
       if (historyList.children.length === 0) {
@@ -314,7 +352,6 @@ saveButton.addEventListener("click", () => {
       statusDiv.textContent = "Error saving data!";
       statusDiv.style.color = "red";
     } else {
-      console.log("Data saved for:", url, dataToSave[url]); // Log saved data including opacity
       statusDiv.textContent = "Saved!";
       statusDiv.style.color = "green";
     } // Clear status after delay
@@ -332,7 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .querySelector('.tab-button[data-tab="main-tab"]')
     .classList.add("active");
-  document.getElementById("main-tab").classList.add("active"); // Load data for the main tab
+  document.getElementById("main-tab").classList.add("active");
 
-  loadCurrentTabData(); // Defer loading history until the tab is clicked
+  // Load data for the main tab
+  loadCurrentTabData();
+
+  // Load history ONLY IF the saved tags tab is the active one initially
+  // (or wait until tab is clicked - current behavior is fine)
+  // if (document.getElementById('saved-tags-tab').classList.contains('active')) {
+  //    displayHistory();
+  // }
 });

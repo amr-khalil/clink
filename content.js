@@ -1,5 +1,3 @@
-console.log("URL Color Tagger: Content script loaded.");
-
 // Function to add the frame and tag to the page
 // *** Add opacityValue parameter ***
 function addFrameAndTag(color, tag, opacityValue) {
@@ -53,11 +51,6 @@ function addFrameAndTag(color, tag, opacityValue) {
   if (document.body) {
     document.body.appendChild(frame);
     document.body.appendChild(tagElement);
-    console.log(
-      `URL Color Tagger: Added frame (${color}, Opacity: ${
-        cssOpacity * 100
-      }%) and tag (${tag}) for ${window.location.href}`,
-    );
   } else {
     // If body isn't ready yet, wait for DOMContentLoaded
     document.addEventListener("DOMContentLoaded", () => {
@@ -65,13 +58,6 @@ function addFrameAndTag(color, tag, opacityValue) {
         // Double check body exists after DOMContentLoaded
         document.body.appendChild(frame);
         document.body.appendChild(tagElement);
-        console.log(
-          `URL Color Tagger: Added frame (${color}, Opacity: ${
-            cssOpacity * 100
-          }%) and tag (${tag}) for ${
-            window.location.href
-          } after DOMContentLoaded`,
-        );
       } else {
         console.error(
           "URL Color Tagger: Document body not found even after DOMContentLoaded.",
@@ -109,7 +95,6 @@ chrome.storage.sync.get([currentUrl], (result) => {
     // *** Pass saved opacity (or undefined if missing) to the function ***
     addFrameAndTag(savedData.color, savedData.tag, savedData.opacity);
   } else {
-    console.log(`URL Color Tagger: No data found for ${currentUrl}`); // Optional: Clean up any old frame/tag if the URL was removed from storage
     const existingFrame = document.getElementById("url-color-tagger-frame");
     if (existingFrame) existingFrame.remove();
     const existingTag = document.getElementById("url-color-tagger-tag");
@@ -131,11 +116,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 
     if (newData && newData.color && newData.tag) {
       // If new data exists (tag was added or updated), add the frame/tag
-      console.log("URL Color Tagger: Storage changed, updating frame/tag."); // *** Pass opacity from newData ***
       addFrameAndTag(newData.color, newData.tag, newData.opacity);
-    } else {
-      // If newData is null/undefined (tag was removed), elements are already removed.
-      console.log("URL Color Tagger: Storage changed, tag removed.");
     }
   }
 });

@@ -1,12 +1,13 @@
 body {
   font-family: sans-serif;
-  width: 350px; /* Adjusted width */
-  padding: 0; /* Remove body padding, handle in sections */
-  background-color: #f4f4f4;
+  width: 375px; /* Slightly wider for better card layout */
+  padding: 0;
+  background-color: #f4f4f8; /* Slightly lighter/bluer background */
   font-size: 14px;
   margin: 0;
-  overflow: hidden; /* Prevent scrollbars from body */
+  overflow: hidden;
 }
+
 h3 {
   /* Extension Title - Optional */
   text-align: center;
@@ -138,55 +139,132 @@ h3 {
 }
 
 /* --- Tab Content Styles --- */
+
+/* --- Tab Content Styles --- */
 .tab-content {
   display: none; /* Hide content by default */
   padding: 15px;
   min-height: 250px; /* Give some base height */
   max-height: 400px; /* Limit overall popup height */
   overflow-y: auto; /* Allow scrolling within content */
+  box-sizing: border-box; /* Include padding in height calculation */
 }
 .tab-content.active {
   display: block; /* Show active content */
 }
 
-/* --- History Styles (Saved Tags Tab) --- */
+/* --- History Styles (Saved Tags Tab) - MODERNIZED --- */
 #saved-tags-tab {
-  padding: 10px; /* Less padding for list */
+  padding: 15px 10px; /* Adjust padding */
+  background-color: #f4f4f8; /* Match body background */
 }
+
 #history-list {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-#history-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 5px;
-  border-bottom: 1px solid #eee;
-  gap: 8px; /* Gap between elements in the row */
-}
-#history-list li:last-child {
-  border-bottom: none;
+  display: flex; /* Use flexbox for the list itself */
+  flex-direction: column; /* Stack items vertically */
+  gap: 10px; /* Space between history item cards */
 }
 
-/* Editable fields */
+/* Card Style for each History Item */
+.history-item {
+  /* This is the <li> element */
+  background-color: #ffffff; /* White card background */
+  border-radius: 6px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+  padding: 10px 12px; /* Internal padding */
+  display: flex;
+  flex-direction: column; /* Stack the URL row and input row */
+  gap: 8px; /* Space between the two rows */
+  border-left: 4px solid transparent; /* Reserve space for color indicator (set in JS) */
+  transition: box-shadow 0.2s ease;
+}
+
+.history-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* Slightly larger shadow on hover */
+}
+
+/* Container for URL row and Input/Actions row */
+.history-item-container {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */ /* Let flex properties handle spacing */
+  width: 100%;
+  gap: 8px; /* Consistent gap */
+}
+
+/* Style the URL display */
+.history-url-display {
+  color: #0066cc; /* Link color */
+  font-size: 0.9em;
+  font-weight: 500;
+  text-decoration: none; /* No underline by default */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncate long URLs */
+  flex-grow: 1; /* Allow URL to take up space */
+  cursor: pointer; /* Indicate it's clickable */
+  /* Remove fixed basis, let it grow */
+}
+.history-url-display:hover {
+  text-decoration: underline; /* Underline on hover */
+  color: #004080;
+}
+
+/* Style the input fields within the history list */
 .history-color-input,
 .history-tag-input {
-  padding: 4px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  padding: 5px 8px; /* Slightly more padding */
+  border: 1px solid #dcdcdc; /* Softer border */
+  border-radius: 4px;
   font-size: 0.9em;
+  height: 28px; /* Consistent height */
+  box-sizing: border-box;
 }
+
 .history-color-input {
-  flex-basis: 50px; /* Width for color picker */
-  height: 28px; /* Match text input height better */
-  padding: 1px 2px; /* Adjust padding for color type */
-  min-width: 50px; /* Prevent shrinking too much */
+  flex-basis: 40px; /* Slightly smaller */
+  min-width: 40px;
+  padding: 2px; /* Adjust padding for color type */
+  height: 28px;
+  border: 1px solid #dcdcdc;
+  cursor: pointer;
 }
+
 .history-tag-input {
-  flex-grow: 1; /* Allow tag input to take space */
-  min-width: 60px;
+  flex-grow: 1; /* Allow tag input to take most space */
+  min-width: 80px;
+}
+.history-tag-input:focus,
+.history-color-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Style the action buttons container */
+.history-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0; /* Prevent buttons shrinking */
+}
+
+/* Style individual action buttons */
+.history-actions button {
+  border: none;
+  border-radius: 4px;
+  padding: 5px 8px; /* Consistent padding */
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: white;
+  line-height: 1;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.history-actions button:hover {
+  opacity: 0.85;
 }
 
 .save-changes-button {
@@ -195,17 +273,33 @@ h3 {
 .save-changes-button:hover {
   background-color: #218838;
 }
+
 .delete-button {
   background-color: #dc3545; /* Red */
 }
 .delete-button:hover {
   background-color: #c82333;
 }
+
+/* Style for the status message per row */
+.history-status {
+  font-size: 0.8em;
+  margin-left: auto; /* Push status to the right */
+  color: green;
+  min-width: 45px; /* Reserve space */
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Placeholder message */
 .no-history {
   text-align: center;
-  color: #888;
-  padding: 15px;
+  color: #777;
+  padding: 20px;
   font-style: italic;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .history-status {
   /* Status message per row */
@@ -224,7 +318,7 @@ h3 {
   padding: 8px 5px;
   border-bottom: 1px solid #eee;
   gap: 8px; /* Gap between elements in the row */
-  width: 100%;
+  width: 97%;
 }
 
 .history-item-container {
