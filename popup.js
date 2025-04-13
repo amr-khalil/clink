@@ -76,22 +76,20 @@ function displayHistory() {
       ) {
         const listItem = document.createElement("li");
         listItem.setAttribute("data-url", url); // Store URL on the li for reference // Truncate URL for display
-
-        let displayUrl = url;
-        if (displayUrl.length > 35) {
-          // Adjust length as needed
-          displayUrl = url.substring(0, 35) + "...";
-        } // *** NOTE: Opacity isn't directly editable in the list view here, but it's saved/preserved ***
-
+        listItem.className = "history-item";
         listItem.innerHTML = `
-                    <span class="history-url-display" title="${url}">${displayUrl}</span>
-                    <input type="color" class="history-color-input" value="${itemData.color}">
-                    <input type="text" class="history-tag-input" value="${itemData.tag}" placeholder="Enter tag">
-                    <div class="history-actions">
-                        <button class="save-changes-button" title="Save changes for this URL">Save</button>
-                        <button class="delete-button" title="Delete this tag">X</button>
-                    </div>
-                    <span class="history-status"></span> `; // Add event listeners for buttons within this specific list item
+            <div class="history-item-container">
+              <a class="history-url-display" title="${url}" href="${url}">${url}</a>
+            </div>
+            <div class="history-item-container">
+              <input type="color" class="history-color-input" value="${itemData.color}">
+              <input type="text" class="history-tag-input" value="${itemData.tag}" placeholder="Enter tag">
+              <div class="history-actions">
+                <button class="save-changes-button" title="Save changes for this URL">Save</button>
+                <button class="delete-button" title="Delete this tag">X</button>
+              </div>
+              <span class="history-status"></span>
+            </div> `;
 
         listItem
           .querySelector(".save-changes-button")

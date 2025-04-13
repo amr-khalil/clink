@@ -169,18 +169,7 @@ h3 {
 #history-list li:last-child {
   border-bottom: none;
 }
-.history-url-display {
-  /* Non-editable URL part */
-  color: #333;
-  font-size: 0.9em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-basis: 120px; /* Give URL a base width */
-  flex-shrink: 1;
-  border: 1px solid transparent; /* Align with inputs */
-  padding: 4px;
-}
+
 /* Editable fields */
 .history-color-input,
 .history-tag-input {
@@ -199,21 +188,7 @@ h3 {
   flex-grow: 1; /* Allow tag input to take space */
   min-width: 60px;
 }
-.history-actions {
-  /* Container for buttons */
-  display: flex;
-  gap: 5px;
-  flex-shrink: 0; /* Prevent buttons shrinking */
-}
-.history-actions button {
-  border: none;
-  border-radius: 4px;
-  padding: 4px 7px;
-  cursor: pointer;
-  font-size: 0.8em;
-  color: white;
-  line-height: 1;
-}
+
 .save-changes-button {
   background-color: #28a745; /* Green */
 }
@@ -239,4 +214,51 @@ h3 {
   color: green;
   min-width: 40px; /* Reserve space */
   text-align: right;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 5px;
+  border-bottom: 1px solid #eee;
+  gap: 8px; /* Gap between elements in the row */
+  width: 100%;
+}
+
+.history-item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.history-url-display {
+  /* Non-editable URL part */
+  color: #333;
+  font-size: 0.9em;
+  white-space: nowrap;
+  flex-basis: 120px; /* Give URL a base width */
+  flex-shrink: 1;
+  border: 1px solid transparent; /* Align with inputs */
+  padding: 4px;
+}
+
+.history-actions {
+  /* Container for buttons */
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0; /* Prevent buttons shrinking */
+}
+
+.history-actions button {
+  border: none;
+  border-radius: 4px;
+  padding: 4px 7px;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: white;
+  line-height: 1;
 }
