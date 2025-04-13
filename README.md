@@ -14,7 +14,6 @@ A simple Chrome extension to add a configurable colored border, text tag, and op
 * **Easy Management:**
     * Add/Update tags for the *current* page via the popup.
     * View, edit, and delete *all* saved tags in the "Saved Links" tab.
-* **Sync Across Devices:** Uses `chrome.storage.sync` to keep your tags consistent across browsers where you're logged into Chrome.
 * **Dynamic Updates:** If a tag is added/updated/removed (via popup or sync) while a tagged page is open, the view updates automatically.
 
 ## Why?
